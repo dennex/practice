@@ -56,6 +56,13 @@ namespace TestTrees
 
             // populate a binary search tree
 
+            //BinarySearchTree bst = new BinaryTree(12);
+            //bst.InsertBST(10);
+            //bst.InsertBST(13);
+            //bst.InsertBST(1);
+            //bst.InsertBST(3);
+            //bst.InsertBST(19);
+            //bst.InsertBST(-1);
 
         }
     }

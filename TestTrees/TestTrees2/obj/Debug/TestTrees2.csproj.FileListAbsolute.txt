@@ -1,0 +1,9 @@
+C:\git\practice\TestTrees\TestTrees2\bin\Debug\TestTrees2.exe.config
+C:\git\practice\TestTrees\TestTrees2\bin\Debug\TestTrees2.exe
+C:\git\practice\TestTrees\TestTrees2\bin\Debug\TestTrees2.pdb
+C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.csprojResolveAssemblyReference.cache
+C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.Properties.Resources.resources
+C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.csproj.GenerateResource.Cache
+C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.exe
+C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.pdb
+C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.Form2.resources

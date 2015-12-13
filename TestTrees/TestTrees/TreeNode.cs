@@ -36,6 +36,13 @@ namespace TestTrees
             set { right = value; }
         }
 
+        public TreeNode()
+        {
+            this.parent = null;
+            this.left = null;
+            this.right = null;
+        }
+
         public TreeNode(int value, TreeNode par)
         {
             this.value = value;
@@ -60,47 +67,35 @@ namespace TestTrees
 
     }
 
-    public class BinaryTree
+    public class BinaryTree:TreeNode
     {
-        private TreeNode root;
-        internal TreeNode Root
-        {
-            get { return root; }
-            set { root = value; }
-        }
-
-        private BinaryTree leftTree;
-        public BinaryTree LeftTree
-        {
-            get { return leftTree; }
-            set { leftTree = value; }
-        }
-
-        private BinaryTree rightTree;
-        public BinaryTree RightTree
-        {
-            get { return rightTree; }
-            set { rightTree = value; }
-        }
+        public TreeNode root;
 
         public BinaryTree()
         {
-
         }
 
-        public BinaryTree(BinaryTree tree)
-        {
-            this.root = tree.root;
-            this.leftTree = tree.leftTree;
-            this.rightTree = tree.rightTree;
-        }
 
         public BinaryTree(TreeNode root, BinaryTree left, BinaryTree right)
         {
             this.root = root;
-            this.leftTree = left;
-            this.rightTree = right;
+            this.Left = left;
+            this.Right = right;
 
+        }
+
+        public BinaryTree(TreeNode root)
+        {
+            this.root = root;
+            this.Left = null;
+            this.Right = null;
+        }
+
+        public BinaryTree(int value)
+        {
+            this.root = new TreeNode(value, null);
+            this.Left = null;
+            this.Right = null;
         }
 
         public string ToString()
@@ -111,67 +106,137 @@ namespace TestTrees
 
         // traversal methods
         // depth first
-        public static void PreOrder(BinaryTree tree)
+        public void PreOrder()
         {
-            if (tree != null)
+            if (this != null)
             {
-                tree.Root.Visit();
-                PreOrder(tree.leftTree);
-                PreOrder(tree.rightTree);
+                this.Visit();
+                ((BinaryTree)this.Left).PreOrder();
+                ((BinaryTree)this.Right).PreOrder();
             }
         }
 
-        public static void InOrder(BinaryTree tree)
-        {
-            if (tree != null)
-            {
-                InOrder(tree.leftTree);
-                tree.Root.Visit();
-                InOrder(tree.rightTree);
-            }
-        }
+        //public static void InOrder(BinaryTree tree)
+        //{
+        //    if (tree != null)
+        //    {
+        //        InOrder(tree.leftTree);
+        //        tree.Root.Visit();
+        //        InOrder(tree.rightTree);
+        //    }
+        //}
 
-        public static void PostOrder(BinaryTree tree)
-        {
-            if (tree != null)
-            {
-                PostOrder(tree.leftTree);
-                PostOrder(tree.rightTree);
-                tree.Root.Visit();
-            }
-        }
+        //public static void PostOrder(BinaryTree tree)
+        //{
+        //    if (tree != null)
+        //    {
+        //        PostOrder(tree.leftTree);
+        //        PostOrder(tree.rightTree);
+        //        tree.Root.Visit();
+        //    }
+        //}
 
-        public static void BreadthFirst(BinaryTree tree)
-        {
-            Queue<TreeNode> q = new Queue<TreeNode>();
-            q.Enqueue(tree.root);
-            while (q.Count!=0)
-            {
-                TreeNode current = q.Dequeue();
-                if (current != null)
-                {
-                    current.Visit();
-                    q.Enqueue(current.Left);
-                    q.Enqueue(current.Right);
-                }
-            }
-        }
+        //public static void BreadthFirst(BinaryTree tree)
+        //{
+        //    Queue<TreeNode> q = new Queue<TreeNode>();
+        //    q.Enqueue(tree.root);
+        //    while (q.Count!=0)
+        //    {
+        //        TreeNode current = q.Dequeue();
+        //        if (current != null)
+        //        {
+        //            current.Visit();
+        //            q.Enqueue(current.Left);
+        //            q.Enqueue(current.Right);
+        //        }
+        //    }
+        //}
 
     }
 
-    public class BinarySearchTree
+    public class BinarySearchTree: BinaryTree
     {
-        // same as Binary Tree but add functions for search, insert, delete
-        private TreeNode FindBST(int value)
-        {// assume the tree is BST
 
-        }
+
+        //// same as Binary Tree but add functions for search, insert, delete
+        //public TreeNode FindBST(int value)
+        //{// assume the tree is BST
+        //    TreeNode current = this;
+
+        //    while (current != null)
+        //    {
+        //        // is it larger?
+        //        if (current.Value < value)
+        //        {// look right
+        //            if (this.Right != null)
+        //            {
+        //                current = current.Right;
+        //            }
+        //        }
+        //        else if (current.Value > value)
+        //        {   // is it smaller?
+        //            if (current.Left != null)
+        //            {
+        //                current = current.Left;
+        //            }
+        //        }
+        //        else
+        //        {   // then its equal!
+        //            return current;
+        //        }
+
+        //    }
+
+        //    return null;
+
+        //}
 
         // check that it is BST
 
         // make this into a BST
 
         // insert into BST
+        // same as Binary Tree but add functions for search, insert, delete
+        public void InsertBST(int value)
+        {// assume the tree is BST
+            TreeNode current = this;
+         
+            while (current != null)
+            {
+                // is it larger?
+                if (current.Value < value)
+                {// look right
+                    if (this.Right != null)
+                    {
+                        current = current.Right;
+                    }
+                    else
+                    {// insert!
+
+                        current.Right = new TreeNode(value, current);
+                        current = null;
+                    }
+                }
+                else if (current.Value > value)
+                {   // is it smaller?
+                    if (this.Left != null)
+                    {
+                        current = current.Left;
+                    }
+                    else
+                    {// insert!
+                        current.Left = new TreeNode(value, current);
+                        current = null;
+                    }
+                }
+                else
+                {   // then its equal!
+                    current = null;
+                }
+                
+
+            }
+        }
 
         // delete from a BST
     }

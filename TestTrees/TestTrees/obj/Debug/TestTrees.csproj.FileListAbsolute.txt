@@ -7,3 +7,12 @@ c:\users\denis\documents\visual studio 2013\Projects\TestTrees\TestTrees\bin\Deb
 c:\users\denis\documents\visual studio 2013\Projects\TestTrees\TestTrees\bin\Debug\TestTrees.pdb
 c:\users\denis\documents\visual studio 2013\Projects\TestTrees\TestTrees\obj\Debug\TestTrees.exe
 c:\users\denis\documents\visual studio 2013\Projects\TestTrees\TestTrees\obj\Debug\TestTrees.pdb
+C:\git\practice\TestTrees\TestTrees\bin\Debug\TestTrees.exe.config
+C:\git\practice\TestTrees\TestTrees\obj\Debug\TestTrees.exe
+C:\git\practice\TestTrees\TestTrees\obj\Debug\TestTrees.pdb
+C:\git\practice\TestTrees\TestTrees\bin\Debug\TestTrees.exe
+C:\git\practice\TestTrees\TestTrees\bin\Debug\TestTrees.pdb
+C:\git\practice\TestTrees\TestTrees\obj\Debug\TestTrees.csprojResolveAssemblyReference.cache
+C:\git\practice\TestTrees\TestTrees\obj\Debug\TestTrees.Form1.resources
+C:\git\practice\TestTrees\TestTrees\obj\Debug\TestTrees.Properties.Resources.resources
+C:\git\practice\TestTrees\TestTrees\obj\Debug\TestTrees.csproj.GenerateResource.Cache
