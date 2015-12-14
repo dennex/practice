@@ -29,11 +29,15 @@ namespace TestTrees2
             tree.InsertValue(20);
             tree.InsertValue(10);
             tree.InsertValue(1);
+            tree.InsertValue(2);
 
             Console.WriteLine( (tree.FindValue(3)).ToString());
-            tree.DeleteNode(16);
-            tree.DeleteNode(0);
+            //tree.DeleteNode(16);
+            //tree.DeleteNode(0);
 
+            tree.GetHeight();
+            BinaryTreeNode<int> current = tree.FindValue(20);
+            BinaryTreeNode<int> parent = tree.Root.FindParent(current);
         }
     }
 }

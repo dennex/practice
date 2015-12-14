@@ -76,8 +76,30 @@ namespace TestTrees2
 
     }
 
-    public class BinaryTreeNode<T> : Node<T>
+    public class BinaryTreeNode<T> : Node<T> where T:IComparable
     {
+        private int m_LeftDepth = 0;
+        public int LeftDepth
+        {
+            get { return m_LeftDepth; }
+            set { m_LeftDepth = value; }
+        }
+
+        private int m_RightDepth = 0;
+        public int RightDepth
+        {
+            get { return m_RightDepth; }
+            set { m_RightDepth = value; }
+        }
+
+        private int m_Inbalance = 0;
+        public int Inbalance
+        {
+            get { return m_Inbalance; }
+            set { m_Inbalance = value; }
+        }
+
+
         public BinaryTreeNode():base(){}
         public BinaryTreeNode(T data) : base(data) { }
         public BinaryTreeNode(T data, BinaryTreeNode<T> left, BinaryTreeNode<T> right)
@@ -152,9 +174,139 @@ namespace TestTrees2
                 return null;
             }
         }
+
+        public BinaryTreeNode<T> PreOrderImbalance() // returns node that has inbalance
+        {
+            if (this != null)
+            {
+                if (Math.Abs(this.Inbalance) > 1)
+                {// there is significant inbalance at this node
+                    return this;
+                }
+                
+                if ((BinaryTreeNode<T>)this.Left != null)
+                {
+                    return ((BinaryTreeNode<T>)this.Left).PreOrderImbalance();
+                }
+
+                
+
+                if ((BinaryTreeNode<T>)this.Right != null)
+                {
+                    return ((BinaryTreeNode<T>)this.Right).PreOrderImbalance();
+                }
+            }
+            // only gets here if nothing returned a node that has inbalance
+            return null;
+
+        }
+
+        public BinaryTreeNode<T> InOrder(Visit analyze, BinaryTreeNode<T> node)
+        {
+            System.Reflection.MethodInfo m1 = analyze.Method;
+            Delegate del = (Delegate.CreateDelegate(typeof(Visit),this, m1));
+            
+            Visit localAnalyze = (Visit)del;
+            
+            if (this.Left != null)
+            {
+                BinaryTreeNode<T> leftNode = ((BinaryTreeNode<T>)this.Left).InOrder(localAnalyze, node);
+                if (leftNode != null)
+                    return leftNode;
+            }
+
+            if (localAnalyze(node))
+                return this;
+
+            if (this.Right != null)
+            {
+                BinaryTreeNode<T> rightNode = ((BinaryTreeNode<T>)this.Right).InOrder(localAnalyze, node);
+                if (rightNode != null)
+                    return rightNode;
+            }
+
+            return null;
+        }
+
+        
+
+        public int GetHeight()
+        {
+
+            if (this.Left != null)
+            {
+                LeftDepth = ((BinaryTreeNode<T>)(this.Left)).GetHeight();
+            }
+            else
+            {
+                LeftDepth = 0;
+            }
+
+            if (this.Right != null)
+            {
+                RightDepth = ((BinaryTreeNode<T>)(this.Right)).GetHeight();
+
+            }
+            else
+            {
+                RightDepth = 0;
+            }
+
+            Inbalance = LeftDepth - RightDepth;
+
+            return 1 + Math.Max(LeftDepth, RightDepth);
+        }
+
+        public BinaryTreeNode<T> GetLeftmost()
+        {
+            BinaryTreeNode<T> leftmost = (BinaryTreeNode<T>)(this.Right);
+            while (leftmost.Left != null)
+            {
+                leftmost = (BinaryTreeNode<T>)(leftmost.Left);
+            }
+
+            return leftmost;
+        }
+
+        public BinaryTreeNode<T> GetRightmost()
+        {
+            BinaryTreeNode<T> rightmost = (BinaryTreeNode<T>)(this.Left);
+            while (rightmost.Right != null)
+            {
+                rightmost = (BinaryTreeNode<T>)(rightmost.Right);
+            }
+
+            return rightmost;
+        }
+
+        public BinaryTreeNode<T> FindParent(BinaryTreeNode<T> node)
+        {
+            Visit handler = isParentDelegate;
+            BinaryTreeNode<T> current = InOrder(handler,node);
+            return current;
+        }
+
+        public bool isParentDelegate(BinaryTreeNode<T> node)
+        {
+            if (this.Left != null && this.Left.Value.CompareTo(node.Value)==0)
+                return true;
+            if (this.Right != null && this.Right.Value.CompareTo(node.Value) == 0)
+                return true;
+            else
+                return false;
+        }
+
+        public void Rotate(BinaryTreeNode<T> parent, BinaryTreeNode<T> current)
+        {
+
+        }
+
+        public delegate bool Visit(BinaryTreeNode<T> node);
     }
 
-    public class BinaryTree<T>
+    
+
+    public class BinaryTree<T> where T:IComparable
     {
         private BinaryTreeNode<T> root;
 
@@ -187,6 +339,8 @@ namespace TestTrees2
             }
         }
 
+        
+
         public string ToString()
         {
             return root.Value.ToString();
@@ -195,6 +349,7 @@ namespace TestTrees2
 
     public class BinarySearchTree<T> : BinaryTree<T> where T : IComparable
     {
+        public BinarySearchTree(){ }
         public BinarySearchTree(T data) : base(data) { }
         // search for a value
 
@@ -354,32 +509,23 @@ namespace TestTrees2
                 }
                 else
                 {// get the leftmost child of the right tree
-                    BinaryTreeNode<T> leftmost = (BinaryTreeNode<T>)(current.Right);
-                    while (leftmost.Left != null)
-                    {
-                        leftmost = (BinaryTreeNode<T>)(leftmost.Left);
-                    }
+                    
                     if (result < 0)
                     {
-                        parent.Right = leftmost;
+                        parent.Right = current.GetLeftmost();
                     }
                     else
                     {
-                        parent.Left = leftmost;
+                        parent.Left = current.GetLeftmost();
                     }
                 }
-
-                
-
             }
         }
 
-        public void Rotation()
+        public int GetHeight()
         {
-
+            return this.Root.GetHeight() - 1;
         }
-        
-
         
 
         public string ToString()
@@ -387,5 +533,39 @@ namespace TestTrees2
             return this.Root.PreOrder();
         }
         
+    }
+
+    public class AVLTree<T> : BinarySearchTree<T> where T:IComparable
+    {// the only difference is the insert function
+        public AVLTree()
+        {
+        }
+
+        public virtual void InsertValue(T data)
+        {
+            // insert
+            base.InsertValue(data);
+
+            // calculate all the depths for all nodes
+            this.GetHeight();
+
+            // traverse all nodes and see if there is any inbalance
+            BinaryTreeNode<T> inbalancedNode = this.Root.PreOrderImbalance();
+
+            if (inbalancedNode == null)
+            {
+                // inbalance is left depth - right depth
+                if (inbalancedNode.Inbalance > 0)
+                {// left is deeper, rotate around the left child
+
+                }
+                else
+                {// right is deeper, rotate around right child
+
+                }
+
+            }
+        }
+
     }
 }
