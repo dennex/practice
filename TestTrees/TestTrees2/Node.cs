@@ -113,7 +113,7 @@ namespace TestTrees2
 
 
         // method for get left
-        public Node<T> Left
+        public BinaryTreeNode<T> Left
         {
             get
             {
@@ -133,7 +133,7 @@ namespace TestTrees2
         }
 
         // method for get right
-        public Node<T> Right
+        public BinaryTreeNode<T> Right
         {
             get
             {
@@ -228,6 +228,35 @@ namespace TestTrees2
             return null;
         }
 
+        public BinaryTreeNode<T> PostOrder(Visit analyze, BinaryTreeNode<T> node)
+        {
+            System.Reflection.MethodInfo m1 = analyze.Method;
+            Delegate del = (Delegate.CreateDelegate(typeof(Visit), this, m1));
+
+            Visit localAnalyze = (Visit)del;
+
+            if (this.Left != null)
+            {
+                BinaryTreeNode<T> leftNode = ((BinaryTreeNode<T>)this.Left).InOrder(localAnalyze, node);
+                if (leftNode != null)
+                    return leftNode;
+            }
+
+            
+
+            if (this.Right != null)
+            {
+                BinaryTreeNode<T> rightNode = ((BinaryTreeNode<T>)this.Right).InOrder(localAnalyze, node);
+                if (rightNode != null)
+                    return rightNode;
+            }
+
+            if (localAnalyze(node))
+                return this;
+
+            return null;
+        }
+
         
 
         public int GetHeight()
@@ -286,20 +315,37 @@ namespace TestTrees2
             return current;
         }
 
+        public BinaryTreeNode<T> FindInBalance()
+        {
+            Visit handler = isInbalanced;
+            BinaryTreeNode<T> current = PostOrder(handler, null);
+            return current;
+        }
+
         public bool isParentDelegate(BinaryTreeNode<T> node)
         {
-            if (this.Left != null && this.Left.Value.CompareTo(node.Value)==0)
-                return true;
-            if (this.Right != null && this.Right.Value.CompareTo(node.Value) == 0)
+            if (node != null)
+            {
+                if (this.Left != null && this.Left.Value.CompareTo(node.Value) == 0)
+                    return true;
+                if (this.Right != null && this.Right.Value.CompareTo(node.Value) == 0)
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+
+        }
+
+        public bool isInbalanced(BinaryTreeNode<T> node)
+        {
+            if (Math.Abs(this.Inbalance) > 1)
                 return true;
             else
                 return false;
         }
-
-        public void Rotate(BinaryTreeNode<T> parent, BinaryTreeNode<T> current)
-        {
-
-        }
+        
 
         public delegate bool Visit(BinaryTreeNode<T> node);
     }
@@ -541,6 +587,11 @@ namespace TestTrees2
         {
         }
 
+        public AVLTree(T data)
+            : base(data)
+        {
+        }
+
         public virtual void InsertValue(T data)
         {
             // insert
@@ -550,20 +601,137 @@ namespace TestTrees2
             this.GetHeight();
 
             // traverse all nodes and see if there is any inbalance
-            BinaryTreeNode<T> inbalancedNode = this.Root.PreOrderImbalance();
+            BinaryTreeNode<T> inbalancedNode = this.Root.FindInBalance();
 
-            if (inbalancedNode == null)
+            while (inbalancedNode != null)
             {
-                // inbalance is left depth - right depth
-                if (inbalancedNode.Inbalance > 0)
-                {// left is deeper, rotate around the left child
+                BinaryTreeNode<T> parent = this.Root.FindParent(inbalancedNode);
+                this.Rotate(inbalancedNode, parent);
 
+                this.GetHeight();
+                inbalancedNode = this.Root.FindInBalance();
+            }
+        }
+
+        public void Rotate(BinaryTreeNode<T> current, BinaryTreeNode<T> parent)
+        {
+            if (parent == null)
+            {//top of tree
+                if (current.Inbalance < 0) //R
+                {
+                    if (current.Right.Left != null)
+                    {// RL
+                        this.Root = current.Right.Left;
+                        current.Right.Left = null;
+                        this.Root.Left = current;
+                        this.Root.Right = current.Right;
+                        current.Right = null;
+                    }
+                    else
+                    {// RR
+                        this.Root = current.Right;
+                        current.Right = null;
+                        this.Root.Left = current;
+
+                    }
+                }
+                else//L
+                {
+                    if (current.Left.Left != null)
+                    {//LL
+                        this.Root = current.Left;
+                        current.Left = null;
+                        this.Root.Right = current;
+                    }
+                    else
+                    {// LR
+                        this.Root = current.Left.Right;
+                        current.Left.Right = null;
+                        this.Root.Left = current.Left;
+                        current.Left = null;
+                        Root.Right = current;
+                    }
+                }
+            }
+            else // this is a parent, find if its left or right of parent
+            {
+                if (parent.Value.CompareTo(current.Value) < 0) // parent smaller, current is right of parent
+                {
+                    if (current.Inbalance < 0) //R
+                    {
+                        if (current.Right.Left != null)
+                        {// RL
+                            parent.Right = current.Right.Left;
+                            current.Right.Left = null;
+                            parent.Right.Left = current;
+                            parent.Right.Right = current.Right;
+                            current.Right = null;
+                        }
+                        else
+                        {// RR
+                            parent.Right = current.Right;
+                            current.Right = null;
+                            parent.Right.Left = current;
+
+                        }
+                    }
+                    else//L
+                    {
+                        if (current.Left.Left != null)
+                        {//LL
+                            parent.Right = current.Left;
+                            current.Left = null;
+                            parent.Right.Right = current;
+                        }
+                        else
+                        {// LR
+                            parent.Right = current.Left.Right;
+                            current.Left.Right = null;
+                            parent.Right.Left = current.Left;
+                            current.Left = null;
+                            Root.Right = current;
+                        }
+                    }
                 }
                 else
-                {// right is deeper, rotate around right child
+                {
+                    
+                    if (current.Inbalance < 0) //R
+                    {
+                        if (current.Right.Left != null)
+                        {// RL
+                            parent.Left = current.Right.Left;
+                            current.Right.Left = null;
+                            parent.Left.Left = current;
+                            parent.Left.Right = current.Right;
+                            current.Right = null;
+                        }
+                        else
+                        {// RR
+                            parent.Left = current.Right;
+                            current.Right = null;
+                            parent.Left.Left = current;
 
+                        }
+                    }
+                    else//L
+                    {
+                        if (current.Left.Left != null)
+                        {//LL
+                            parent.Left = current.Left;
+                            current.Left = null;
+                            parent.Left.Right = current;
+                        }
+                        else
+                        {// LR
+                            parent.Left = current.Left.Right;
+                            current.Left.Right = null;
+                            parent.Left.Left = current.Left;
+                            current.Left = null;
+                            Root.Right = current;
+                        }
+                    }
                 }
-
             }
         }
 

@@ -7,3 +7,12 @@ C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.csproj.GenerateResourc
 C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.exe
 C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.pdb
 C:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.Form2.resources
+D:\git\practice\TestTrees\TestTrees2\bin\Debug\TestTrees2.exe.config
+D:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.exe
+D:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.pdb
+D:\git\practice\TestTrees\TestTrees2\bin\Debug\TestTrees2.exe
+D:\git\practice\TestTrees\TestTrees2\bin\Debug\TestTrees2.pdb
+D:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.Form2.resources
+D:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.Properties.Resources.resources
+D:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.csproj.GenerateResource.Cache
+D:\git\practice\TestTrees\TestTrees2\obj\Debug\TestTrees2.csprojResolveAssemblyReference.cache

@@ -35,9 +35,14 @@ namespace TestTrees2
             //tree.DeleteNode(16);
             //tree.DeleteNode(0);
 
-            tree.GetHeight();
-            BinaryTreeNode<int> current = tree.FindValue(20);
-            BinaryTreeNode<int> parent = tree.Root.FindParent(current);
+            Random rnd = new Random();
+            AVLTree<int> tree2 = new AVLTree<int>(0);
+            for (int I = 0; I < 20; I++)
+            {
+                int rand = rnd.Next(100);
+                tree2.InsertValue(rand);
+            }
+
         }
     }
 }
