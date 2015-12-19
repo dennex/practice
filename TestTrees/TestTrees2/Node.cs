@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestTrees2
 {
-    public class Node<T>
+    public class Node<T> where T:IComparable
     {
         private T data;
         NodeList<T> neighbors;
@@ -28,26 +28,14 @@ namespace TestTrees2
 
         public T Value
         {
-            get
-            {
-                return data;
-            }
-            set
-            {
-                data = value;
-            }
+            get;
+            set;
         }
 
         public NodeList<T> Neighbors
         {
-            get
-            {
-                return neighbors;
-            }
-            set
-            {
-                neighbors = value;
-            }
+            get;
+            set;
         }
 
         public string ToString()
@@ -59,10 +47,15 @@ namespace TestTrees2
         {
             return data.ToString();
         }
+
+        public int CompareTo(Node<T> node)
+        {
+            return this.Value.CompareTo(node.Value);
+        }
     }
 
 
-    public class NodeList<T>:List<Node<T>>
+    public class NodeList<T>:List<Node<T>> where T:IComparable
     {
         public NodeList():base(){}
 
@@ -73,7 +66,6 @@ namespace TestTrees2
                 base.Add(default(Node<T>));
             }
         }
-
     }
 
     public class BinaryTreeNode<T> : Node<T> where T:IComparable
@@ -112,7 +104,7 @@ namespace TestTrees2
         }
 
 
-        // method for get left
+        // accessor left
         public BinaryTreeNode<T> Left
         {
             get
@@ -132,7 +124,7 @@ namespace TestTrees2
             }
         }
 
-        // method for get right
+        // accessor right
         public BinaryTreeNode<T> Right
         {
             get
@@ -150,21 +142,21 @@ namespace TestTrees2
             }
         }
 
-        public string PreOrder()
+        public string PreOrderDisplay()
         {
             if (this != null)
             {
                 String str = "";
                 if ((BinaryTreeNode<T>)this.Left != null)
                 {
-                    str += "," + ((BinaryTreeNode<T>)this.Left).PreOrder();
+                    str += ((BinaryTreeNode<T>)this.Left).PreOrderDisplay() + "/";
                 }
 
-                 str += "," + this.Visit();
+                 str += '('+ this.Visit() + ')';
 
                 if ((BinaryTreeNode<T>)this.Right != null)
                 {
-                    str += "," + ((BinaryTreeNode<T>)this.Right).PreOrder();
+                    str += "\\" + ((BinaryTreeNode<T>)this.Right).PreOrderDisplay();
                 }
 
                 return str;
@@ -175,30 +167,33 @@ namespace TestTrees2
             }
         }
 
-        public BinaryTreeNode<T> PreOrderImbalance() // returns node that has inbalance
+        public BinaryTreeNode<T> PreOrder(Visit analyze, BinaryTreeNode<T> node)
         {
-            if (this != null)
+            System.Reflection.MethodInfo m1 = analyze.Method;
+            Delegate del = (Delegate.CreateDelegate(typeof(Visit), this, m1));
+
+            Visit localAnalyze = (Visit)del;
+            
+            if (localAnalyze(node))
+                return this;
+
+            if (this.Left != null)
             {
-                if (Math.Abs(this.Inbalance) > 1)
-                {// there is significant inbalance at this node
-                    return this;
-                }
-                
-                if ((BinaryTreeNode<T>)this.Left != null)
-                {
-                    return ((BinaryTreeNode<T>)this.Left).PreOrderImbalance();
-                }
-
-                
-
-                if ((BinaryTreeNode<T>)this.Right != null)
-                {
-                    return ((BinaryTreeNode<T>)this.Right).PreOrderImbalance();
-                }
+                BinaryTreeNode<T> leftNode = ((BinaryTreeNode<T>)this.Left).PreOrder(localAnalyze, node);
+                if (leftNode != null)
+                    return leftNode;
             }
-            // only gets here if nothing returned a node that has inbalance
-            return null;
 
+            
+
+            if (this.Right != null)
+            {
+                BinaryTreeNode<T> rightNode = ((BinaryTreeNode<T>)this.Right).PreOrder(localAnalyze, node);
+                if (rightNode != null)
+                    return rightNode;
+            }
+
+            return null;
         }
 
         public BinaryTreeNode<T> InOrder(Visit analyze, BinaryTreeNode<T> node)
@@ -256,8 +251,6 @@ namespace TestTrees2
 
             return null;
         }
-
-        
 
         public int GetHeight()
         {
@@ -322,13 +315,14 @@ namespace TestTrees2
             return current;
         }
 
+        // delegate functions for visit
         public bool isParentDelegate(BinaryTreeNode<T> node)
         {
             if (node != null)
             {
-                if (this.Left != null && this.Left.Value.CompareTo(node.Value) == 0)
+                if (this.Left != null && this.Left.CompareTo(node) == 0)
                     return true;
-                if (this.Right != null && this.Right.Value.CompareTo(node.Value) == 0)
+                if (this.Right != null && this.Right.CompareTo(node) == 0)
                     return true;
                 else
                     return false;
@@ -346,8 +340,30 @@ namespace TestTrees2
                 return false;
         }
         
-
         public delegate bool Visit(BinaryTreeNode<T> node);
+
+        // display functions
+        public void PrintPretty(string indent, bool last)
+        {
+            Console.Write(indent);
+            if (last)
+            {
+                Console.Write("\\-");
+                indent += "  ";
+            }
+            else
+            {
+                Console.Write("|-");
+                indent += "| ";
+            }
+            Console.WriteLine(this.Value);
+
+            if (this.Left != null)
+                ((BinaryTreeNode<T>)(this.Left)).PrintPretty(indent, false);
+            if (this.Right != null)
+                ((BinaryTreeNode<T>)(this.Right)).PrintPretty(indent, true);
+            
+        }
     }
 
     
@@ -391,6 +407,9 @@ namespace TestTrees2
         {
             return root.Value.ToString();
         }
+
+        
+        
     }
 
     public class BinarySearchTree<T> : BinaryTree<T> where T : IComparable
@@ -517,7 +536,7 @@ namespace TestTrees2
                 }
             }
             
-            result = parent.Value.CompareTo(current.Value);
+            result = parent.CompareTo(current);
             if (current != null)
             {//case 1: only left tree
                 if (current.Left != null && current.Right == null)
@@ -576,7 +595,7 @@ namespace TestTrees2
 
         public string ToString()
         {// show everything depth first, traversing left to right
-            return this.Root.PreOrder();
+            return this.Root.PreOrderDisplay();
         }
         
     }
@@ -655,7 +674,7 @@ namespace TestTrees2
             }
             else // this is a parent, find if its left or right of parent
             {
-                if (parent.Value.CompareTo(current.Value) < 0) // parent smaller, current is right of parent
+                if (parent.CompareTo(current) < 0) // parent smaller, current is right of parent
                 {
                     if (current.Inbalance < 0) //R
                     {
@@ -689,12 +708,12 @@ namespace TestTrees2
                             current.Left.Right = null;
                             parent.Right.Left = current.Left;
                             current.Left = null;
-                            Root.Right = current;
+                            parent.Left.Right = current;
                         }
                     }
                 }
                 else
-                {
+                {// parent is larger, current is left of parent
                     
                     if (current.Inbalance < 0) //R
                     {
@@ -728,7 +747,7 @@ namespace TestTrees2
                             current.Left.Right = null;
                             parent.Left.Left = current.Left;
                             current.Left = null;
-                            Root.Right = current;
+                            parent.Left.Right = current;
                         }
                     }
                 }
@@ -736,4 +755,5 @@ namespace TestTrees2
         }
 
     }
+
 }
